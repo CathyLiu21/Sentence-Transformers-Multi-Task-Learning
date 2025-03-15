@@ -10,6 +10,7 @@ A multi-task learning implementation combining sentence classification and named
 ├── task2_multi_task_learning.py
 ├── task3_training_considerations.py
 ├── task4_training_loop.py
+├── task3_4_summary.txt
 ├── requirements.txt
 ├── Dockerfile
 └── README.md
@@ -19,7 +20,6 @@ A multi-task learning implementation combining sentence classification and named
 
 ### Prerequisites
 - Docker installed on your system
-- NVIDIA Docker runtime (for GPU support)
 
 ### Building the Docker Image
 ```bash
@@ -27,8 +27,16 @@ A multi-task learning implementation combining sentence classification and named
 docker build -t bionlp-multitask .
 ```
 
+### Base Image Details
+- PyTorch: 2.0.1
+- Runtime: CPU-enabled PyTorch runtime
+
+### Environment Variables
+The following environment variables are available:
+- `TASK_FILE`: Specify which task file to run (default: task1_sentence_transformer.py)
+
 ### Running Different Tasks
-You can run different tasks by setting the TASK_FILE environment variable:
+You can run either Task 1 or Task 2 using the Docker container:
 
 ```bash
 # Run Task 1 (default)
@@ -39,9 +47,6 @@ docker run -it --rm -e TASK_FILE=task1_sentence_transformer.py bionlp-multitask
 
 # Run Task 2
 docker run -it --rm -e TASK_FILE=task2_multi_task_learning.py bionlp-multitask
-
-# With GPU support (recommended for LoRA)
-docker run -it --rm --gpus all -e TASK_FILE=task2_multi_task_learning.py bionlp-multitask
 ```
 
 ### Development Mode
@@ -50,10 +55,12 @@ To develop and test inside the container:
 # Mount current directory and run in interactive mode
 docker run -it --rm -v $(pwd):/app bionlp-multitask bash
 
-# Then inside the container you can run any task:
+# Then inside the container you can run either task:
 python task1_sentence_transformer.py
 python task2_multi_task_learning.py
 ```
+
+Note: Tasks 3 and 4 are not configured for Docker deployment and should be run using the manual setup below.
 
 ## Manual Setup (without Docker)
 
@@ -77,9 +84,10 @@ python task4_training_loop.py
 
 - Base model: RoBERTa-large
 - Fine-tuning: LoRA (Low-Rank Adaptation)
-  - Rank: 8
+  - Rank: 16
   - Alpha: 16
   - Dropout: 0.1
+  - Bias: all
 - Tasks:
   - Task A: Document section classification
   - Task B: Named Entity Recognition (NER)
@@ -89,37 +97,44 @@ python task4_training_loop.py
 - Learning rate: 2e-5
 - Batch size: 4
 - Epochs: 3
-- Optimizer: Adam
+- Optimizer: Adam with trainable parameters only
+- Loss functions:
+  - Classification: CrossEntropyLoss
+  - NER: CrossEntropyLoss (ignore_index=-100)
 - Loss weights: Classification (1.0), NER (1.0)
 - LoRA Configuration:
-  - Target modules: query and value matrices
-  - Bias: none
-  - Task modules: Classification and NER heads
+  - Task type: TOKEN_CLS
+  - Inference mode: False
+  - Target modules: Automatically determined
+  - Trainable parameters: LoRA adapters and task-specific heads only
 
 ## Key Features
 
 1. Efficient Fine-tuning
    - Uses LoRA for parameter-efficient training
-   - Only fine-tunes small rank decomposition matrices
+   - Only fine-tunes LoRA adapters and task-specific heads
+   - Original transformer backbone remains frozen
    - Significantly reduces memory usage and training time
 
 2. Multi-Task Learning
-   - Shared transformer backbone
-   - Task-specific LoRA adapters
-   - Balanced loss weighting
+   - Shared RoBERTa backbone (frozen)
+   - Task-specific heads for classification and NER
+   - Balanced loss weighting (1:1)
+   - Mean pooling for sentence-level classification
 
-3. Performance Optimization
-   - Gradient checkpointing support
-   - Mixed precision training
-   - Efficient memory management
+3. Model Architecture Details
+   - Classification head: Linear layer with dropout (0.1)
+   - NER head: Token-level classification
+   - Tokenizer: RoBERTa with add_prefix_space=True
+   - Label handling: Special token ignored (-100)
 
 ## Notes
 
 - The model uses LoRA for efficient fine-tuning
-- GPU support is highly recommended for training
-- See individual task files for detailed implementation notes
+- Backbone parameters are frozen during training
+- Task-specific heads and LoRA adapters are trainable
 - Memory requirements are significantly reduced compared to full fine-tuning
-
+- Supports both sentence classification and token-level NER
 
 ## Task Descriptions
 

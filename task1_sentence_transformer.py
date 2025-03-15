@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     # Sample sentences for testing.
     sentences = [
-        "This is a test sentence.",
+        "This is a sentence transformer implementation.",
         "I love machine learning.",
         "Transformers are revolutionizing NLP!"
     ]
