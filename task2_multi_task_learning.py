@@ -122,6 +122,8 @@ if __name__ == "__main__":
        print("---")
 
     #########Test Task B########
+
+    # Extract tokens and tags for Task B
     sample_example_B = bionlp["train"][0]
     print("Extracted Tokens for Task B:")
     print(sample_example_B)
@@ -147,7 +149,7 @@ if __name__ == "__main__":
     10: "I-RNA",
     }
 
-# convert predictions for each sentence in the batch:
+# convert predictions for each sample in the batch:
     predicted_labels = []
     for i in range(predicted_indices.shape[0]):
        sentence_pred_labels = []
@@ -161,7 +163,7 @@ if __name__ == "__main__":
             sentence_pred_labels.append(id2label_b.get(idx, "UNK"))
        predicted_labels.append(sentence_pred_labels)
 
-# Print predicted labels for each sentence.
+# Print predicted tags for selected sample.
     for i, labels in enumerate(predicted_labels):
       print(f"Predicted NER for Sample:")
       print(labels)
