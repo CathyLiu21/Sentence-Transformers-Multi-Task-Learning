@@ -60,7 +60,7 @@ python task1_sentence_transformer.py
 python task2_multi_task_learning.py
 ```
 
-Note: Tasks 3 and 4 are not configured for Docker deployment and should be run using the manual setup below.
+**Note: Tasks 4 is not configured for Docker deployment and should be run using the manual setup below.**
 
 ## Manual Setup (without Docker)
 
