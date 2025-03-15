@@ -108,7 +108,7 @@ python task4_training_loop.py
   - Target modules: Automatically determined
   - Trainable parameters: LoRA adapters and task-specific heads only
 
-## Key Features (Task 4)
+## Key Features
 
 1. Efficient Fine-tuning
    - Uses LoRA for parameter-efficient training
