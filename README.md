@@ -8,7 +8,7 @@ A multi-task learning implementation combining sentence classification and named
 .
 ├── task1_sentence_transformer.py
 ├── task2_multi_task_learning.py
-├── task3_training_considerations.py
+├── task3_training_considerations.txt
 ├── task4_training_loop.py
 ├── task3_4_summary.txt
 ├── requirements.txt
