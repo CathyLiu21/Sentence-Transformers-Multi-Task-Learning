@@ -80,7 +80,7 @@ pip install -r requirements.txt
 python task4_training_loop.py
 ```
 
-## Model Architecture
+## Model Architecture (Task 4)
 
 - Base model: RoBERTa-large
 - Fine-tuning: LoRA (Low-Rank Adaptation)
@@ -92,7 +92,7 @@ python task4_training_loop.py
   - Task A: Document section classification
   - Task B: Named Entity Recognition (NER)
 
-## Training Parameters
+## Training Parameters (Task 4)
 
 - Learning rate: 2e-5
 - Batch size: 4
@@ -108,7 +108,7 @@ python task4_training_loop.py
   - Target modules: Automatically determined
   - Trainable parameters: LoRA adapters and task-specific heads only
 
-## Key Features
+## Key Features (Task 4)
 
 1. Efficient Fine-tuning
    - Uses LoRA for parameter-efficient training
