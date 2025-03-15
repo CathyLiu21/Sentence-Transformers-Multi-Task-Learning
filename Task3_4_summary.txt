@@ -1,0 +1,27 @@
+Summary of Tasks 3 & 4: Multi-Task Learning Implementation
+
+In Task 3, I discussed different fine-tuning strategies for a pre-trained model. If we freeze the entire 
+network, you use it solely as a feature extractor, which is efficient but limits adaptation. Freezing 
+only the transformer backbone allows the task-specific heads to learn from new data while preserving
+robust, generic features, offering faster convergence and reduced overfitting. Alternatively, 
+freezing just one head lets you maintain strong performance for one task while focusing fine-tuning 
+efforts on the other. Ultimately, a gradual unfreezing strategy—starting with a frozen backbone
+(using a model like roberta-large) and selectively fine-tuning upper layers and heads, 
+possibly with PEFT/LoRA—provides a balanced, efficient approach to transfer learning.
+
+
+The key insight in Task 4 was finding a way to leverage a pre-trained model for two distinct tasks 
+without retraining the entire network from scratch. We designed a multi-task transformer that employs
+a shared transformer backbone with separate heads for sentence classification and NER. Aligning the
+NER labels with the tokenized output was particularly challenging due to subword splitting, so we 
+implemented a custom function to ensure that only the first subword carries the label. By combining 
+the losses from both tasks using a weighted sum, we can control the influence of each task during 
+fine-tuning, thereby achieving a balanced learning process.
+
+I believe that incorporating PEFT, specifically using LoRA, was a strategic decision. Freezing the 
+transformer backbone and updating only the LoRA adapter parameters and task-specific heads allows us
+to retain the robust, pre-trained representations while efficiently adapting the model to our specific 
+tasks. This approach not only reduces computational overhead and the risk of overfitting but also 
+ensures that our model is flexible enough to perform well on both classification and NER tasks. 
+Overall, the strategy successfully balances the benefits of transfer learning with the need for 
+task-specific customization.

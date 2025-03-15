@@ -1,0 +1,25 @@
+# Core ML libraries
+torch>=1.9.0
+numpy>=1.19.0
+
+# Transformer and dataset libraries
+transformers>=4.5.0
+datasets>=1.8.0
+tokenizers>=0.13.0  # Required by transformers
+peft>=0.4.0  # For LoRA fine-tuning
+
+# LoRA and efficient training
+accelerate>=0.20.0  # For distributed training
+bitsandbytes>=0.41.0  # For efficient LoRA training
+scipy>=1.9.0  # Required for LoRA operations
+
+# Metrics and evaluation
+scikit-learn>=0.24.0  # For precision_score, recall_score, f1_score
+seqeval>=1.2.2  # For NER metrics
+
+# Data handling and utilities
+tqdm>=4.65.0  # For progress bars
+pandas>=1.5.0  # For data handling
+
+# Optional but recommended
+cuda-python  # For GPU support, if available 
