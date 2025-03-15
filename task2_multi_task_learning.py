@@ -123,6 +123,8 @@ if __name__ == "__main__":
 
     #########Test Task B########
     sample_example_B = bionlp["train"][0]
+    print("Extracted Tokens for Task B:")
+    print(sample_example_B)
     inputs_for_ner = {"tokens": [sample_example_B["tokens"]], "tags": [sample_example_B["tags"]]}
     ner_logits, tokenized_inputs = model(inputs_for_ner, task='B')
     print("Task B - NER Logits Shape:", ner_logits.shape) 
@@ -161,5 +163,5 @@ if __name__ == "__main__":
 
 # Print predicted labels for each sentence.
     for i, labels in enumerate(predicted_labels):
-      print(f"Sentence {i+1}:")
+      print(f"Predicted NER for Sample:")
       print(labels)
