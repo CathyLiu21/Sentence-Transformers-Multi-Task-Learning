@@ -172,10 +172,7 @@ python task1_sentence_transformer.py
 python task2_multi_task_learning.py
 ```
 
-3. Training Considerations:
-```bash
-python task3_training_considerations.py
-```
+3. Training Considerations (texts only)
 
 4. Training Loop:
 ```bash
