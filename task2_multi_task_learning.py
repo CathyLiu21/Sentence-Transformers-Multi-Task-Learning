@@ -95,13 +95,71 @@ if __name__ == "__main__":
     # Instantiate the model
     model = MultiTaskTransformer()
 
-    # Test Task A
+    #########Test Task A########
+    class_labels = ["Abstract","Background", "Methods", "Results", "Conclusion"]
+    class_mapping = {label: idx for idx, label in enumerate(class_labels)}
+    # Create an inverse mapping for predictions.
+    id2label_a = {v: k for k, v in class_mapping.items()}
+    # Extract sentences from the BioNLP dataset.
+    # (Here we join tokens from the first 5 examples of the training split.)
     sample_sentences_A = [" ".join(tokens) for tokens in bionlp["train"]["tokens"][:5]]
+    print("Extracted Sentences:")
+    for sentence in sample_sentences_A:
+       print(sentence)
+    # Forward pass: Get classification logits for Task A.
     class_logits = model(sample_sentences_A, task='A')
-    print("\nTask A - Classification Logits Shape:", class_logits.shape)
 
-    # Test Task B
-    sample_example_b = bionlp["train"][0]
-    inputs_for_ner = {"tokens": [sample_example_b["tokens"]], "tags": [sample_example_b["tags"]]}
+    # Get predicted indices by taking the argmax.
+    predicted_class_indices = torch.argmax(class_logits, dim=1).tolist()
+
+# Map predicted indices to label names.
+    predicted_labels = [id2label_a[idx] for idx in predicted_class_indices]
+
+    print("\nPredicted Classification Labels for Task A:")
+    for sentence, label in zip(sample_sentences_A, predicted_labels):
+       print(f"Sentence: {sentence}")
+       print(f"Predicted Label: {label}")
+       print("---")
+
+    #########Test Task B########
+    sample_example_B = bionlp["train"][0]
+    inputs_for_ner = {"tokens": [sample_example_B["tokens"]], "tags": [sample_example_B["tags"]]}
     ner_logits, tokenized_inputs = model(inputs_for_ner, task='B')
     print("Task B - NER Logits Shape:", ner_logits.shape) 
+
+    # Convert logits to predicted indices by taking the argmax over the last dimension.
+    predicted_indices  = torch.argmax(ner_logits, dim=-1)  # shape: [batch_size, seq_len]
+
+    # Define the id2label mapping.
+    id2label_b = {
+    0: "O",
+    1: "B-DNA",
+    2: "I-DNA",
+    3: "B-protein",
+    4: "I-protein",
+    5: "B-cell_type",
+    6: "I-cell_type",
+    7: "B-cell_line",
+    8: "I-cell_line",
+    9: "B-RNA",
+    10: "I-RNA",
+    }
+
+# convert predictions for each sentence in the batch:
+    predicted_labels = []
+    for i in range(predicted_indices.shape[0]):
+       sentence_pred_labels = []
+    # If you have word_ids (from the tokenizer), you could use it to align further; 
+    # here we assume that predicted_indices already correspond to the input tokens.
+       for idx in predicted_indices[i].tolist():
+        # If idx is -100, it means this token is to be ignored.
+          if idx == -100:
+            sentence_pred_labels.append("IGN")
+          else:
+            sentence_pred_labels.append(id2label_b.get(idx, "UNK"))
+       predicted_labels.append(sentence_pred_labels)
+
+# Print predicted labels for each sentence.
+    for i, labels in enumerate(predicted_labels):
+      print(f"Sentence {i+1}:")
+      print(labels)
